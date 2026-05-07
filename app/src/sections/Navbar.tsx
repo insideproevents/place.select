@@ -70,7 +70,7 @@ export default function Navbar() {
 
             {/* Right side */}
             <div className="hidden lg:flex items-center gap-4">
-              <span className="text-xs text-[#666666]">UF: $39.728</span>
+              <span className="text-xs text-white">UF: $39.728</span>
               <Link
                 to="/#contacto"
                 onClick={() => handleNavClick('/#contacto')}
