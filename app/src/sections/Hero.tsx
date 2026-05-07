@@ -93,7 +93,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="mt-16 sm:mt-20 pt-6 sm:pt-8 border-t border-white/10 flex flex-wrap items-center gap-3 sm:gap-6"
+          className="mt-[-64px] sm:mt-[-72px] pt-6 sm:pt-8 border-t border-white/10 flex flex-wrap items-center gap-3 sm:gap-6"
         >
           {bottomTexts.map((text, i) => (
             <div key={text} className="flex items-center gap-3 sm:gap-6">
