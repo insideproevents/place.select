@@ -19,7 +19,7 @@ export default function Hero() {
           alt="Place Select"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b bg-[#0A0A0A]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A/10] via-[#0A0A0A/20] to-[#0A0A0A/40]" />
       </div>
 
       {/* Content */}
