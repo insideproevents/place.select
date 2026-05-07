@@ -66,7 +66,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
-            className="mt-[28px] sm:mt-[44px] flex flex-nowrap items-center gap-4 sm:gap-8 overflow-x-auto"
+            className="mt-6 sm:mt-10 flex flex-nowrap items-center gap-4 sm:gap-8 overflow-x-auto"
           >
             {features.map((feature, i) => (
               <div key={feature.label} className="flex items-center gap-2 sm:gap-3">
