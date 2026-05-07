@@ -1,7 +1,16 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/app/dist/index.html" },
-    { "source": "/proyecto/(.*)", "destination": "/app/dist/index.html" },
-    { "source": "/(.*)", "destination": "/app/dist/index.html" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    { "handle": "filesystem" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
