@@ -73,7 +73,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
         </div>
       </div>
 
-      {/* Quick features */}
+      {/* Quick features - always shown for alignment */}
       <div className="px-4 py-2 flex flex-wrap gap-3 text-xs text-[#B0B0B0]">
         <span className="flex items-center gap-1">
           <Bed className="w-3.5 h-3.5" /> {project.features.bedrooms} dorm.
@@ -81,21 +81,16 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
         <span className="flex items-center gap-1">
           <Bath className="w-3.5 h-3.5" /> {project.features.bathrooms} baños
         </span>
-        {project.features.parking && (
-          <span className="flex items-center gap-1">
-            <Car className="w-3.5 h-3.5" /> Estac.
-          </span>
-        )}
-        {project.features.storage && (
-          <span className="flex items-center gap-1">
-            <Warehouse className="w-3.5 h-3.5" /> Bod.
-          </span>
-        )}
+        <span className="flex items-center gap-1">
+          <Car className="w-3.5 h-3.5" /> {project.features.parking ? 'Estac.' : 'Sin estac.'}
+        </span>
+        <span className="flex items-center gap-1">
+          <Warehouse className="w-3.5 h-3.5" /> {project.features.storage ? 'Bod.' : 'Sin bod.'}
+        </span>
         <span className="flex items-center gap-1">
           <Maximize className="w-3.5 h-3.5" /> {project.surface}
         </span>
       </div>
-
 
       {/* Tags */}
       {project.tags.length > 0 && (
