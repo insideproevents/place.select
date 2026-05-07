@@ -2,6 +2,6 @@
   "name": "place-select-portal",
   "private": true,
   "scripts": {
-    "build": "echo 'Build handled by vercel.json'"
+    "build": "cd app && npm install && npm run build"
   }
 }
