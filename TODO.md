@@ -4,7 +4,8 @@
 - [ ] Step 2: Create/confirm Vercel settings for a React/Vite SPA served via `HashRouter`.
 - [x] Step 3: Provide deployment settings (project root = `app/`, build command = `npm run build`, output directory = `dist`).
 - [x] Step 4: No `vercel.json` required (HashRouter).
-- [ ] Step 5: Verify after deploy: `/#/` and `/#/proyecto/<slug>`.
+- [x] Step 5: Handle Vercel 404 probes by adding root `vercel.json` rewrite to `index.html`.
+
 
 
 

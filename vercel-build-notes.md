@@ -15,6 +15,11 @@ This app uses **HashRouter** (client-side routing). That means refreshes to `/pr
 - Home page: `/#/` loads
 - Project detail: `/#/proyecto/<slug>` loads
 
+## Note about the previous 404 issue
+- Some Vercel/CDN probes or direct navigations may still request non-hash URLs (e.g. `/proyecto/<slug>`), which can show 404.
+- To guard against that, a root-level `vercel.json` rewrite is included to always serve `index.html` for any path.
+
 ## Why `HashRouter` matters
-- URLs are hash-based, so Vercel will always serve `index.html` for routes, and the client router handles everything.
+- URLs are hash-based, so navigation is handled client-side via `HashRouter`.
+
 
