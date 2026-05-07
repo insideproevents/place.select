@@ -96,37 +96,6 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
         </span>
       </div>
 
-      {/* Availability Table */}
-      <div className="px-4 py-3 border-t border-white/[0.08]">
-        <div className="grid grid-cols-4 text-xs font-semibold text-[#B0B0B0] mb-2">
-          <span>Estado</span>
-          <span className="text-center">Depto.</span>
-          <span className="text-center">Bdga.</span>
-          <span className="text-center">Estac.</span>
-        </div>
-        {(
-          [
-            ['Bloqueado', project.availability.blocked, 'border-red-500 text-red-500'],
-            ['Disponible', project.availability.available, 'border-green-500 text-green-500'],
-            ['En Negocio', project.availability.negotiating, 'border-amber-500 text-amber-500'],
-          ] as const
-        ).map(([label, data, colorClass]) => (
-          <div key={label} className="grid grid-cols-4 text-xs py-1.5 border-b border-white/[0.04]">
-            <span className={`px-2 py-0.5 border rounded text-center font-bold ${colorClass}`}>
-              {label}
-            </span>
-            <span className="text-center text-white">{data.apartments}</span>
-            <span className="text-center text-white">{data.storage}</span>
-            <span className="text-center text-white">{data.parking}</span>
-          </div>
-        ))}
-        <div className="grid grid-cols-4 text-xs py-2 font-bold text-white">
-          <span>TOTAL</span>
-          <span className="text-center">{project.availability.total.apartments}</span>
-          <span className="text-center">{project.availability.total.storage}</span>
-          <span className="text-center">{project.availability.total.parking}</span>
-        </div>
-      </div>
 
       {/* Tags */}
       {project.tags.length > 0 && (
