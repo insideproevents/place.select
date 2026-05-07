@@ -9,12 +9,6 @@ const features = [
   { icon: MapPin, label: 'Las Mejores Ubicaciones' },
 ];
 
-const bottomTexts = [
-  'Departamentos que inspiran',
-  'Inversiones que trascienden',
-  'Vidas que mejoran',
-];
-
 export default function Hero() {
   return (
     <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden">
@@ -87,25 +81,6 @@ export default function Hero() {
             ))}
           </motion.div>
         </div>
-
-        {/* Bottom bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="mt-[-64px] sm:mt-[-72px] pt-6 sm:pt-8 border-t border-white/10 flex flex-wrap items-center gap-3 sm:gap-6"
-        >
-          {bottomTexts.map((text, i) => (
-            <div key={text} className="flex items-center gap-3 sm:gap-6">
-              {i > 0 && (
-                <span className="text-[#C9A962]/40">|</span>
-              )}
-              <span className="text-xs sm:text-sm uppercase tracking-[0.08em] text-[#666666]">
-                {text}
-              </span>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );
