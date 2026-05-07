@@ -72,12 +72,12 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
-            className="mt-8 sm:mt-12 flex flex-wrap items-center gap-4 sm:gap-6"
+            className="mt-8 sm:mt-12 flex flex-nowrap items-center gap-4 sm:gap-8 overflow-x-auto"
           >
             {features.map((feature, i) => (
               <div key={feature.label} className="flex items-center gap-2 sm:gap-3">
                 {i > 0 && (
-                  <span className="hidden sm:inline text-[#C9A962]/60 text-lg">|</span>
+                  <span className="text-[#C9A962]/60 text-lg">|</span>
                 )}
                 <feature.icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#C9A962]" strokeWidth={1.5} />
                 <span className="text-xs sm:text-[13px] font-medium uppercase tracking-[0.05em] text-[#B0B0B0]">
