@@ -1,12 +1,8 @@
 {
   "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/proyecto/(.*)", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "routes": [
-    {
-      "src": "/proyecto/:slug*",
-      "dest": "/index.html"
-    }
   ]
 }
 
