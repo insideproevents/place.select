@@ -31,7 +31,7 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="font-display text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-white uppercase tracking-[0.15em] leading-tight"
           >
-            THE BEST PLACES TO LIVE
+            
           </motion.h1>
 
           <motion.p
