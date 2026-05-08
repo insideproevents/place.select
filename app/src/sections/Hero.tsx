@@ -11,19 +11,19 @@ const features = [
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden">
+    <section className="relative h-[100dvh] sm:h-[100dvh] flex flex-col justify-end overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <img
           src="/images/hero-banner.png"
           alt="Place Select"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-[center_top]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A/10] via-[#0A0A0A/20] to-[#0A0A0A/40]" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-[1280px] ml-[-15px] px-4 sm:px-6 lg:px-12 pb-[64px] sm:pb-[94px] lg:pb-[97px] w-full">
+      <div className="relative z-10 max-w-[1280px] ml-[-15px] px-4 sm:px-6 lg:px-12 pb-[32px] sm:pb-[94px] lg:pb-[97px] w-full">
         <div className="max-w-2xl">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
