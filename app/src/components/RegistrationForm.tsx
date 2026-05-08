@@ -63,7 +63,7 @@ export default function RegistrationForm() {
       ) : (
         <>
           <h2 className="text-3xl font-bold text-center mb-6">Registro de Clientes</h2>
-          <p className="text-center text-[#B0B0B0] mb-8">
+          <p className="center text-[#B0B0B0] mb-8">
             Completa tus datos para recibir información exclusiva sobre nuestros proyectos
           </p>
           
@@ -77,6 +77,7 @@ export default function RegistrationForm() {
                   id="nombre"
                   type="text"
                   name="nombre"
+                  autoComplete="name"
                   value={formData.nombre}
                   onChange={handleChange}
                   placeholder="Juan Pérez González"
@@ -93,6 +94,7 @@ export default function RegistrationForm() {
                   id="email"
                   type="email"
                   name="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="juan@email.com"
@@ -107,29 +109,31 @@ export default function RegistrationForm() {
                 Teléfono de contacto
               </label>
               <Input
-                id="telefono"
-                type="tel"
-                name="telefono"
-                value={formData.telefono}
-                onChange={handleChange}
-                placeholder="+56 9 1234 5678"
-                required
-                disabled={isSubmitting}
-              />
-            </div>
+                  id="telefono"
+                  type="tel"
+                  name="telefono"
+                  autoComplete="tel"
+                  value={formData.telefono}
+                  onChange={handleChange}
+                  placeholder="+56 9 1234 5678"
+                  required
+                  disabled={isSubmitting}
+                />
+              </div>
             
             <div>
               <label htmlFor="mensaje" className="block text-sm font-medium text-white mb-1">
                 Mensaje (opcional)
               </label>
               <Textarea
-                id="mensaje"
-                name="mensaje"
-                value={formData.mensaje}
-                onChange={handleChange}
-                placeholder="¿En qué tipo de proyecto estás interesado?"
-                rows={4}
-                disabled={isSubmitting}
+                  id="mensaje"
+                  name="mensaje"
+                  autoComplete="off"
+                  value={formData.mensaje}
+                  onChange={handleChange}
+                  placeholder="¿En qué tipo de proyecto estás interesado?"
+                  rows={4}
+                  disabled={isSubmitting}
               />
             </div>
             
