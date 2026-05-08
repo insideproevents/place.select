@@ -58,7 +58,7 @@ export default function Navbar({ onOpenRegistration }: NavbarProps) {
               <img
                 src="/images/logo.png"
                 alt="Place Select"
-className="h-10 w-auto object-contain sm:h-[200%]"
+className="h-[150px] w-[150px] object-contain"
               />
             </Link>
 
