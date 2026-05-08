@@ -23,7 +23,7 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-[1280px] ml-[-15px] px-4 sm:px-6 lg:px-12 pb-[32px] sm:pb-[94px] lg:pb-[97px] w-full">
+<div className="relative z-10 max-w-[1280px] ml-[-15px] px-4 sm:px-6 lg:px-12 pb-[22px] sm:pb-[94px] lg:pb-[97px] w-full">
         <div className="max-w-2xl">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
