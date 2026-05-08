@@ -4,7 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-export default function RegistrationForm() {
+interface RegistrationFormProps {
+  onSuccess?: () => void;
+}
+
+export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -26,16 +30,16 @@ export default function RegistrationForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+    
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
-
+    
     // Here you would typically send data to your backend
     console.log('Registration data:', formData);
-
+    
     setIsSubmitting(false);
     setShowSuccess(true);
-
+    
     // Reset form after success
     setTimeout(() => {
       setShowSuccess(false);
@@ -45,6 +49,7 @@ export default function RegistrationForm() {
         telefono: '',
         mensaje: ''
       });
+      onSuccess?.();
     }, 3000);
   };
 
@@ -63,10 +68,10 @@ export default function RegistrationForm() {
       ) : (
         <>
           <h2 className="text-3xl font-bold text-center mb-6">Registro de Clientes</h2>
-          <p className="center text-[#B0B0B0] mb-8">
+          <p className="text-center text-[#B0B0B0] mb-8">
             Completa tus datos para recibir información exclusiva sobre nuestros proyectos
           </p>
-
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
@@ -85,7 +90,7 @@ export default function RegistrationForm() {
                   disabled={isSubmitting}
                 />
               </div>
-
+              
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-white mb-1">
                   Correo electrónico
@@ -103,7 +108,7 @@ export default function RegistrationForm() {
                 />
               </div>
             </div>
-
+            
             <div>
               <label htmlFor="telefono" className="block text-sm font-medium text-white mb-1">
                 Teléfono de contacto
@@ -120,7 +125,7 @@ export default function RegistrationForm() {
                   disabled={isSubmitting}
                 />
               </div>
-
+            
             <div>
               <label htmlFor="mensaje" className="block text-sm font-medium text-white mb-1">
                 Mensaje (opcional)
@@ -136,7 +141,7 @@ export default function RegistrationForm() {
                   disabled={isSubmitting}
               />
             </div>
-
+            
             <Button
               type="submit"
               variant="default"
