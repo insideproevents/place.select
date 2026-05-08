@@ -79,8 +79,7 @@ export default function Navbar() {
                 Asesoría
               </Link>
               <Link
-                to="/#registro"
-                onClick={() => handleNavClick('/#registro')}
+                to="/registro"
                 className="px-5 py-2.5 bg-[#C9A962] text-[#0A0A0A] text-sm font-semibold rounded-lg hover:brightness-110 transition-all duration-200 ml-3"
               >
                 Ingresar
@@ -127,8 +126,7 @@ export default function Navbar() {
                 Asesoría
               </Link>
               <Link
-                to="/#registro"
-                onClick={() => handleNavClick('/#registro')}
+                to="/registro"
                 className="mt-4 px-8 py-3 bg-[#C9A962] text-[#0A0A0A] font-semibold rounded-lg"
               >
                 Ingresar
