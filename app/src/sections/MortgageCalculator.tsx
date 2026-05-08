@@ -155,7 +155,7 @@ export default function MortgageCalculator() {
             <div className="space-y-5">
               {/* Income */}
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
+                <label htmlFor="income-input" className="block text-sm font-medium text-white/90 mb-2">
                   Renta Líquida Mensual ({state.currency})
                 </label>
                 <div className="flex items-center gap-2">
@@ -166,6 +166,7 @@ export default function MortgageCalculator() {
                     <Minus className="w-4 h-4" />
                   </button>
                   <input
+                    id="income-input"
                     type="number"
                     value={state.income}
                     onChange={(e) => updateField('income', Number(e.target.value))}
@@ -182,10 +183,11 @@ export default function MortgageCalculator() {
 
               {/* Property Value */}
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
+                <label htmlFor="property-value" className="block text-sm font-medium text-white/90 mb-2">
                   Valor Total de la Propiedad (UF)
                 </label>
                 <input
+                  id="property-value"
                   type="number"
                   value={state.propertyValue}
                   onChange={(e) => updateField('propertyValue', Number(e.target.value))}
@@ -195,10 +197,11 @@ export default function MortgageCalculator() {
 
               {/* Down Payment */}
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
+                <label htmlFor="down-payment" className="block text-sm font-medium text-white/90 mb-2">
                   Pie (%)
                 </label>
                 <input
+                  id="down-payment"
                   type="number"
                   value={state.downPaymentPercent}
                   onChange={(e) => updateField('downPaymentPercent', Number(e.target.value))}
@@ -208,10 +211,11 @@ export default function MortgageCalculator() {
 
               {/* Interest Rate */}
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
+                <label htmlFor="interest-rate" className="block text-sm font-medium text-white/90 mb-2">
                   Tasa de Interés Anual (BCCh: 4.13%)
                 </label>
                 <input
+                  id="interest-rate"
                   type="number"
                   step="0.01"
                   value={state.interestRate}
@@ -222,10 +226,11 @@ export default function MortgageCalculator() {
 
               {/* Years */}
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
+                <label htmlFor="credit-years" className="block text-sm font-medium text-white/90 mb-2">
                   Plazo del Crédito (Años)
                 </label>
                 <select
+                  id="credit-years"
                   value={state.years}
                   onChange={(e) => updateField('years', Number(e.target.value))}
                   className="w-full px-4 py-2.5 bg-white/15 border-0 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-white/30 appearance-none"
@@ -240,10 +245,11 @@ export default function MortgageCalculator() {
 
               {/* Fire Insurance */}
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
+                <label htmlFor="fire-insurance" className="block text-sm font-medium text-white/90 mb-2">
                   Seguro de Incendio y Sismo (UF)
                 </label>
                 <input
+                  id="fire-insurance"
                   type="number"
                   step="0.01"
                   value={state.fireInsurance}
@@ -254,10 +260,11 @@ export default function MortgageCalculator() {
 
               {/* Life Insurance */}
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">
+                <label htmlFor="life-insurance" className="block text-sm font-medium text-white/90 mb-2">
                   Seguro de Desgravamen (UF)
                 </label>
                 <input
+                  id="life-insurance"
                   type="number"
                   step="0.01"
                   value={state.lifeInsurance}

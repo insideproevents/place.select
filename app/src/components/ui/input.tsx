@@ -1,20 +1,13 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-function Input({ 
-  className, 
-  type, 
-  id,
-  name,
-  ...props 
-}: React.ComponentProps<"input"> & { 
-  id?: string; 
-  name?: string 
-}) {
+function Input({
+  className,
+  type,
+  ...props
+}: React.ComponentProps<"input">) {
   return (
     <input
-      id={id}
-      name={name}
       type={type}
       data-slot="input"
       className={cn(
