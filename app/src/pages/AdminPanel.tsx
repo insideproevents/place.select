@@ -8,7 +8,6 @@ import {
   AlertTriangle,
   Loader2,
   Pencil,
-  X,
 } from 'lucide-react'
 
 type ProjectFeatures = {
@@ -330,7 +329,9 @@ export default function AdminPanel() {
     setFeaturesParking(project.features?.parking || false)
     setFeaturesStorage(project.features?.storage || false)
     setFeaturesTerrace(project.features?.terrace || '')
-  }
+   }
+
+  const handleSignOut = async () => {
     setError(null)
 
     if (!supabase) {
@@ -347,47 +348,47 @@ export default function AdminPanel() {
     navigate('/admin/login', { replace: true })
   }
 
-  const formatTags = (t: AdminProjectRow['tags']) => {
+  const formatTags = (t: unknown): string[] => {
     if (!t) return []
-    if (Array.isArray(t)) return t
+    if (Array.isArray(t)) return t as string[]
     if (typeof t === 'string') {
       try {
         const parsed = JSON.parse(t)
-        if (Array.isArray(parsed)) return parsed
+        if (Array.isArray(parsed)) return parsed as string[]
       } catch {
         // ignore
       }
-      return t.split(',').map((x) => x.trim()).filter(Boolean)
+      return t.split(',').map((x: string) => x.trim()).filter(Boolean)
     }
     return []
   }
 
-  const formatGallery = (g: AdminProjectRow['gallery']) => {
+  const formatGallery = (g: unknown): string[] => {
     if (!g) return []
-    if (Array.isArray(g)) return g
+    if (Array.isArray(g)) return g as string[]
     if (typeof g === 'string') {
       try {
         const parsed = JSON.parse(g)
-        if (Array.isArray(parsed)) return parsed
+        if (Array.isArray(parsed)) return parsed as string[]
       } catch {
         // ignore
       }
-      return g.split(',').map((x) => x.trim()).filter(Boolean)
+      return g.split(',').map((x: string) => x.trim()).filter(Boolean)
     }
     return []
   }
 
-  const formatPlans = (p: AdminProjectRow['plans']) => {
+  const formatPlans = (p: unknown): string[] => {
     if (!p) return []
-    if (Array.isArray(p)) return p
+    if (Array.isArray(p)) return p as string[]
     if (typeof p === 'string') {
       try {
         const parsed = JSON.parse(p)
-        if (Array.isArray(parsed)) return parsed
+        if (Array.isArray(parsed)) return parsed as string[]
       } catch {
         // ignore
       }
-      return p.split(',').map((x) => x.trim()).filter(Boolean)
+      return p.split(',').map((x: string) => x.trim()).filter(Boolean)
     }
     return []
   }
@@ -436,7 +437,7 @@ export default function AdminPanel() {
                   Los campos "gallery", "plans" y "tags" se ingresan como URLs o etiquetas separadas por comas.
                 </p>
 
-                <form onSubmit={handleAddProject} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
@@ -775,7 +776,7 @@ export default function AdminPanel() {
 
                               {safeTags.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mt-3">
-                                  {safeTags.slice(0, 6).map((t) => (
+                                  {safeTags.slice(0, 6).map((t: string) => (
                                     <span
                                       key={t}
                                       className="text-xs px-2 py-1 rounded-full bg-white/5 border border-white/10 text-[#B0B0B0]"
