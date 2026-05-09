@@ -108,6 +108,7 @@ export default function AdminPanel() {
       }
 
       const { data, error: sessionError } = await client.auth.getSession()
+      console.log('session:', data?.session)
       if (sessionError) {
         setError('No se pudo verificar la sesión.')
         setSessionChecked(true)
