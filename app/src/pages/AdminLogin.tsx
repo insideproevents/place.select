@@ -20,6 +20,10 @@ export default function AdminLogin() {
 
     setLoading(true)
     try {
+      console.log('supabase client:', supabase)
+      console.log('url:', import.meta.env.VITE_SUPABASE_URL)
+      console.log('key:', import.meta.env.VITE_SUPABASE_ANON_KEY)
+
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
