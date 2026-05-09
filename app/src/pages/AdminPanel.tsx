@@ -7,6 +7,8 @@ import {
   Trash2,
   AlertTriangle,
   Loader2,
+  Pencil,
+  X,
 } from 'lucide-react'
 
 type ProjectFeatures = {
@@ -68,6 +70,8 @@ export default function AdminPanel() {
   const [featuresParking, setFeaturesParking] = useState(false)
   const [featuresStorage, setFeaturesStorage] = useState(false)
   const [featuresTerrace, setFeaturesTerrace] = useState('')
+
+  const [editingSlug, setEditingSlug] = useState<string | null>(null)
 
   const galleryArray = useMemo(() => {
     return galleryText
@@ -151,7 +155,7 @@ export default function AdminPanel() {
     load()
   }, [sessionChecked])
 
-  const handleAddProject = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!supabase) return
 
@@ -202,33 +206,26 @@ export default function AdminPanel() {
         units: [],
       }
 
-      const { error: insertError } = await supabase
-        .from('projects')
-        .insert(payload)
+      if (editingSlug) {
+        // Modo edición: actualizar proyecto existente
+        const { error: updateError } = await supabase
+          .from('projects')
+          .update(payload)
+          .eq('slug', editingSlug)
 
-      if (insertError) throw insertError
+        if (updateError) throw updateError
+      } else {
+        // Modo creación: insertar nuevo proyecto
+        const { error: insertError } = await supabase
+          .from('projects')
+          .insert(payload)
 
-      // Reset form
-      setSlug('')
-      setName('')
-      setDeveloper('')
-      setCity('')
-      setCommune('')
-      setAddress('')
-      setPriceFromUf('')
-      setTypologies('')
-      setStatus('')
-      setDelivery('')
-      setImage('')
-      setGalleryText('')
-      setPlansText('')
-      setTagsText('')
-      setSurface('')
-      setFeaturesBedrooms('')
-      setFeaturesBathrooms('')
-      setFeaturesParking(false)
-      setFeaturesStorage(false)
-      setFeaturesTerrace('')
+        if (insertError) throw insertError
+      }
+
+      // Reset form y modo edición
+      setEditingSlug(null)
+      resetForm()
 
       // Refresh list
       const { data, error: listError } = await supabase
@@ -239,7 +236,7 @@ export default function AdminPanel() {
       if (listError) throw listError
       setProjects((data ?? []) as AdminProjectRow[])
     } catch (e: any) {
-      setError(e?.message ?? 'Error al agregar el proyecto.')
+      setError(e?.message ?? 'Error al guardar el proyecto.')
     }
   }
 
@@ -277,7 +274,57 @@ export default function AdminPanel() {
     }
   }
 
-  const handleSignOut = async () => {
+  const handleCancelEdit = () => {
+    setEditingSlug(null)
+    resetForm()
+  }
+
+  const resetForm = () => {
+    setSlug('')
+    setName('')
+    setDeveloper('')
+    setCity('')
+    setCommune('')
+    setAddress('')
+    setPriceFromUf('')
+    setTypologies('')
+    setStatus('')
+    setDelivery('')
+    setImage('')
+    setGalleryText('')
+    setPlansText('')
+    setTagsText('')
+    setSurface('')
+    setFeaturesBedrooms('')
+    setFeaturesBathrooms('')
+    setFeaturesParking(false)
+    setFeaturesStorage(false)
+    setFeaturesTerrace('')
+  }
+
+  const handleEdit = (project: AdminProjectRow) => {
+    setEditingSlug(project.slug)
+    setSlug(project.slug)
+    setName(project.name)
+    setDeveloper(project.developer || '')
+    setCity(project.city || '')
+    setCommune(project.commune || '')
+    setAddress(project.address || '')
+    setPriceFromUf(String(project.price_from_uf))
+    setTypologies(project.typologies || '')
+    setStatus(project.status || '')
+    setDelivery(project.delivery || '')
+    setImage(project.image || '')
+    setGalleryText(project.gallery?.join(', ') || '')
+    setPlansText(project.plans?.join(', ') || '')
+    setTagsText(project.tags?.join(', ') || '')
+    setSurface(project.surface || '')
+    setFeaturesBedrooms(project.features?.bedrooms || '')
+    setFeaturesBathrooms(project.features?.bathrooms || '')
+    setFeaturesParking(project.features?.parking || false)
+    setFeaturesStorage(project.features?.storage || false)
+    setFeaturesTerrace(project.features?.terrace || '')
+  }
     setError(null)
 
     if (!supabase) {
@@ -651,12 +698,23 @@ export default function AdminPanel() {
                     </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full px-4 py-2.5 bg-[#C9A962] text-[#0A0A0A] text-sm font-semibold rounded-lg hover:brightness-110 transition-all duration-200"
-                  >
-                    Guardar proyecto
-                  </button>
+                  <div className="flex gap-3">
+                    {editingSlug && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEdit}
+                        className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-all duration-200"
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                    <button
+                      type="submit"
+                      className={editingSlug ? "flex-1 px-4 py-2.5 bg-[#C9A962] text-[#0A0A0A] text-sm font-semibold rounded-lg hover:brightness-110 transition-all duration-200" : "w-full px-4 py-2.5 bg-[#C9A962] text-[#0A0A0A] text-sm font-semibold rounded-lg hover:brightness-110 transition-all duration-200"}
+                    >
+                      {editingSlug ? 'Actualizar proyecto' : 'Guardar proyecto'}
+                    </button>
+                  </div>
                 </form>
               </div>
 
@@ -745,14 +803,25 @@ export default function AdminPanel() {
                               )}
                             </div>
 
-                            <button
-                              onClick={() => handleDelete(p)}
-                              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 transition-colors"
-                              title="Eliminar"
-                            >
-                              <Trash2 size={18} className="text-red-200" />
-                              <span className="text-sm text-red-200">Eliminar</span>
-                            </button>
+                            <div className="flex items-start gap-2">
+                              <button
+                                onClick={() => handleEdit(p)}
+                                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                                title="Editar"
+                              >
+                                <Pencil size={18} className="text-[#C9A962]" />
+                                <span className="text-sm text-[#C9A962]">Editar</span>
+                              </button>
+
+                              <button
+                                onClick={() => handleDelete(p)}
+                                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 transition-colors"
+                                title="Eliminar"
+                              >
+                                <Trash2 size={18} className="text-red-200" />
+                                <span className="text-sm text-red-200">Eliminar</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       )
