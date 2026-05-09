@@ -10,6 +10,7 @@ const navLinks = [
   { label: 'Nosotros', href: '/#nosotros' },
   { label: 'Calculadora', href: '/#calculadora' },
   { label: 'Contacto', href: '/#contacto' },
+  { label: 'Backend', href: 'https://placeselect.cl' },
 ];
 
 interface NavbarProps {
