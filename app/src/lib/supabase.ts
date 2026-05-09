@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+const rawUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
+// Limpia la URL eliminando cualquier path extra como /rest/v1/
+const supabaseUrl = rawUrl?.replace(/\/(rest\/v1\/?)?$/, '')
+
 if (!supabaseUrl || !supabaseAnonKey) {
-  // Evita crash en runtime si no se configuraron env vars (ej: aún no están en Vercel)
-  console.warn(
-    '[Supabase] Faltan VITE_SUPABASE_URL y/o VITE_SUPABASE_ANON_KEY. La carga de proyectos será omitida.'
-  )
+  console.warn('[Supabase] Faltan VITE_SUPABASE_URL y/o VITE_SUPABASE_ANON_KEY.')
 }
 
 export const supabase =
