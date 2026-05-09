@@ -10,7 +10,6 @@ const navLinks = [
   { label: 'Nosotros', href: '/#nosotros' },
   { label: 'Calculadora', href: '/#calculadora' },
   { label: 'Contacto', href: '/#contacto' },
-  { label: 'Backend', href: 'https://placeselect.cl' },
 ];
 
 interface NavbarProps {
@@ -35,7 +34,10 @@ export default function Navbar({ onOpenRegistration }: NavbarProps) {
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
       }
+      return;
     }
+
+    // Si es un link externo, dejamos que el navegador lo abra.
   };
 
   const handleRegistrationClick = () => {
