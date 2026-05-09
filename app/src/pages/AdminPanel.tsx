@@ -9,14 +9,34 @@ import {
   Loader2,
 } from 'lucide-react'
 
+type ProjectFeatures = {
+  bedrooms: string
+  bathrooms: string
+  parking: boolean
+  storage: boolean
+  terrace: string
+}
+
 type AdminProjectRow = {
   id?: string | number
-  title: string
-  description: string | null
-  image_url: string | null
-  category: string | null
-  location: string | null
-  tags: string[] | string | null
+  name: string
+  slug: string
+  developer: string
+  city: string
+  commune: string
+  address: string
+  price_from_uf: number
+  typologies: string
+  status: string
+  delivery: string
+  image: string
+  gallery: string[]
+  plans: string[]
+  tags: string[]
+  surface: string
+  features: ProjectFeatures
+  availability: Record<string, unknown>
+  units: unknown[]
 }
 
 export default function AdminPanel() {
@@ -28,17 +48,45 @@ export default function AdminPanel() {
 
   const [error, setError] = useState<string | null>(null)
 
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
-  const [category, setCategory] = useState('')
-  const [location, setLocation] = useState('')
+  const [slug, setSlug] = useState('')
+  const [name, setName] = useState('')
+  const [developer, setDeveloper] = useState('')
+  const [city, setCity] = useState('')
+  const [commune, setCommune] = useState('')
+  const [address, setAddress] = useState('')
+  const [priceFromUf, setPriceFromUf] = useState('')
+  const [typologies, setTypologies] = useState('')
+  const [status, setStatus] = useState('')
+  const [delivery, setDelivery] = useState('')
+  const [image, setImage] = useState('')
+  const [galleryText, setGalleryText] = useState('')
+  const [plansText, setPlansText] = useState('')
   const [tagsText, setTagsText] = useState('')
+  const [surface, setSurface] = useState('')
+  const [featuresBedrooms, setFeaturesBedrooms] = useState('')
+  const [featuresBathrooms, setFeaturesBathrooms] = useState('')
+  const [featuresParking, setFeaturesParking] = useState(false)
+  const [featuresStorage, setFeaturesStorage] = useState(false)
+  const [featuresTerrace, setFeaturesTerrace] = useState('')
+
+  const galleryArray = useMemo(() => {
+    return galleryText
+      .split(',')
+      .map((url) => url.trim())
+      .filter(Boolean)
+  }, [galleryText])
+
+  const plansArray = useMemo(() => {
+    return plansText
+      .split(',')
+      .map((url) => url.trim())
+      .filter(Boolean)
+  }, [plansText])
 
   const tagsArray = useMemo(() => {
     return tagsText
       .split(',')
-      .map((t) => t.trim())
+      .map((tag) => tag.trim())
       .filter(Boolean)
   }, [tagsText])
 
@@ -86,12 +134,10 @@ export default function AdminPanel() {
       setLoadingProjects(true)
 
       try {
-        // Esperado por la petición: tabla "projects" con campos tipo:
-        // title, description, image_url, category, location, tags
         const { data, error: listError } = await client
           .from('projects')
           .select('*')
-          .order('title', { ascending: true })
+          .order('name', { ascending: true })
 
         if (listError) throw listError
         setProjects((data ?? []) as AdminProjectRow[])
@@ -111,19 +157,49 @@ export default function AdminPanel() {
 
     setError(null)
 
-    if (!title.trim()) {
-      setError('El campo "title" es obligatorio.')
+    if (!slug.trim()) {
+      setError('El campo "slug" es obligatorio.')
       return
+    }
+    if (!name.trim()) {
+      setError('El campo "name" es obligatorio.')
+      return
+    }
+
+    const priceFromUfNum = parseFloat(priceFromUf)
+    if (isNaN(priceFromUfNum) || priceFromUfNum < 0) {
+      setError('price_from_uf debe ser un número válido.')
+      return
+    }
+
+    const features: ProjectFeatures = {
+      bedrooms: featuresBedrooms.trim(),
+      bathrooms: featuresBathrooms.trim(),
+      parking: featuresParking,
+      storage: featuresStorage,
+      terrace: featuresTerrace.trim(),
     }
 
     try {
       const payload = {
-        title: title.trim(),
-        description: description.trim() || null,
-        image_url: imageUrl.trim() || null,
-        category: category.trim() || null,
-        location: location.trim() || null,
+        name: name.trim(),
+        slug: slug.trim(),
+        developer: developer.trim() || null,
+        city: city.trim() || null,
+        commune: commune.trim() || null,
+        address: address.trim() || null,
+        price_from_uf: priceFromUfNum,
+        typologies: typologies.trim() || null,
+        status: status.trim() || null,
+        delivery: delivery.trim() || null,
+        image: image.trim() || null,
+        gallery: galleryArray,
+        plans: plansArray,
         tags: tagsArray,
+        surface: surface.trim() || null,
+        features,
+        availability: {},
+        units: [],
       }
 
       const { error: insertError } = await supabase
@@ -133,18 +209,32 @@ export default function AdminPanel() {
       if (insertError) throw insertError
 
       // Reset form
-      setTitle('')
-      setDescription('')
-      setImageUrl('')
-      setCategory('')
-      setLocation('')
+      setSlug('')
+      setName('')
+      setDeveloper('')
+      setCity('')
+      setCommune('')
+      setAddress('')
+      setPriceFromUf('')
+      setTypologies('')
+      setStatus('')
+      setDelivery('')
+      setImage('')
+      setGalleryText('')
+      setPlansText('')
       setTagsText('')
+      setSurface('')
+      setFeaturesBedrooms('')
+      setFeaturesBathrooms('')
+      setFeaturesParking(false)
+      setFeaturesStorage(false)
+      setFeaturesTerrace('')
 
       // Refresh list
       const { data, error: listError } = await supabase
         .from('projects')
         .select('*')
-        .order('title', { ascending: true })
+        .order('name', { ascending: true })
 
       if (listError) throw listError
       setProjects((data ?? []) as AdminProjectRow[])
@@ -158,8 +248,6 @@ export default function AdminPanel() {
 
     setError(null)
 
-    // Supabase typically returns `id`, but we fallback to title if no id exists.
-    // For safety, we try to delete by id first, otherwise by title.
     try {
       if (row.id !== undefined && row.id !== null && row.id !== '') {
         const { error: deleteError } = await supabase
@@ -172,7 +260,7 @@ export default function AdminPanel() {
         const { error: deleteError } = await supabase
           .from('projects')
           .delete()
-          .eq('title', row.title)
+          .eq('name', row.name)
 
         if (deleteError) throw deleteError
       }
@@ -180,7 +268,7 @@ export default function AdminPanel() {
       const { data, error: listError } = await supabase
         .from('projects')
         .select('*')
-        .order('title', { ascending: true })
+        .order('name', { ascending: true })
 
       if (listError) throw listError
       setProjects((data ?? []) as AdminProjectRow[])
@@ -217,6 +305,36 @@ export default function AdminPanel() {
         // ignore
       }
       return t.split(',').map((x) => x.trim()).filter(Boolean)
+    }
+    return []
+  }
+
+  const formatGallery = (g: AdminProjectRow['gallery']) => {
+    if (!g) return []
+    if (Array.isArray(g)) return g
+    if (typeof g === 'string') {
+      try {
+        const parsed = JSON.parse(g)
+        if (Array.isArray(parsed)) return parsed
+      } catch {
+        // ignore
+      }
+      return g.split(',').map((x) => x.trim()).filter(Boolean)
+    }
+    return []
+  }
+
+  const formatPlans = (p: AdminProjectRow['plans']) => {
+    if (!p) return []
+    if (Array.isArray(p)) return p
+    if (typeof p === 'string') {
+      try {
+        const parsed = JSON.parse(p)
+        if (Array.isArray(parsed)) return parsed
+      } catch {
+        // ignore
+      }
+      return p.split(',').map((x) => x.trim()).filter(Boolean)
     }
     return []
   }
@@ -262,76 +380,197 @@ export default function AdminPanel() {
                   Agregar proyecto
                 </h2>
                 <p className="text-[#B0B0B0] text-sm mb-5">
-                  Los campos "tags" se ingresan como texto separado por comas.
+                  Los campos "gallery", "plans" y "tags" se ingresan como URLs o etiquetas separadas por comas.
                 </p>
 
                 <form onSubmit={handleAddProject} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
-                      title
-                    </label>
-                    <input
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
-                      placeholder="Ej: Laguna Andina"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
-                      description
-                    </label>
-                    <input
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
-                      placeholder="Descripción corta"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
-                      image_url
-                    </label>
-                    <input
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
-                      placeholder="https://..."
-                    />
-                  </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
-                        category
+                        slug
                       </label>
                       <input
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        value={slug}
+                        onChange={(e) => setSlug(e.target.value)}
                         className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
-                        placeholder="Ej: Departamento"
+                        placeholder="Ej: laguna-andina"
+                        required
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
-                        location
+                        name
                       </label>
                       <input
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: Laguna Andina"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        developer
+                      </label>
+                      <input
+                        value={developer}
+                        onChange={(e) => setDeveloper(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: Constructora XYZ"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        city
+                      </label>
+                      <input
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
                         className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
                         placeholder="Ej: Santiago"
                       />
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        commune
+                      </label>
+                      <input
+                        value={commune}
+                        onChange={(e) => setCommune(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: Providencia"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        address
+                      </label>
+                      <input
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: Av. Principal 123"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        price_from_uf
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={priceFromUf}
+                        onChange={(e) => setPriceFromUf(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: 1000"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        surface
+                      </label>
+                      <input
+                        value={surface}
+                        onChange={(e) => setSurface(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: 120 m²"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        typologies
+                      </label>
+                      <input
+                        value={typologies}
+                        onChange={(e) => setTypologies(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: 1, 2, 3 dormitorios"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        status
+                      </label>
+                      <input
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: En venta"
+                      />
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
-                      tags (coma separada)
+                      delivery
+                    </label>
+                    <input
+                      value={delivery}
+                      onChange={(e) => setDelivery(e.target.value)}
+                      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                      placeholder="Ej: Inmediata"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                      image (URL)
+                    </label>
+                    <input
+                      value={image}
+                      onChange={(e) => setImage(e.target.value)}
+                      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                      gallery (URLs separadas por coma)
+                    </label>
+                    <input
+                      value={galleryText}
+                      onChange={(e) => setGalleryText(e.target.value)}
+                      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                      placeholder="https://img1.jpg, https://img2.jpg"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                      plans (URLs separadas por coma)
+                    </label>
+                    <input
+                      value={plansText}
+                      onChange={(e) => setPlansText(e.target.value)}
+                      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                      placeholder="https://plano1.pdf, https://plano2.pdf"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                      tags (separadas por coma)
                     </label>
                     <input
                       value={tagsText}
@@ -339,6 +578,77 @@ export default function AdminPanel() {
                       className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
                       placeholder="tag1, tag2, tag3"
                     />
+                  </div>
+
+                  <div className="border-t border-white/10 pt-4">
+                    <h3 className="text-sm font-medium text-[#B0B0B0] mb-3">
+                      Características
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                          features_bedrooms
+                        </label>
+                        <input
+                          value={featuresBedrooms}
+                          onChange={(e) => setFeaturesBedrooms(e.target.value)}
+                          className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                          placeholder="Ej: 1, 2, 3"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                          features_bathrooms
+                        </label>
+                        <input
+                          value={featuresBathrooms}
+                          onChange={(e) => setFeaturesBathrooms(e.target.value)}
+                          className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                          placeholder="Ej: 1, 2"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id="features_parking"
+                          checked={featuresParking}
+                          onChange={(e) => setFeaturesParking(e.target.checked)}
+                          className="w-4 h-4 rounded border-white/30 bg-white/5 text-[#C9A962] focus:ring-2 focus:ring-[#C9A962]"
+                        />
+                        <label htmlFor="features_parking" className="text-sm text-[#B0B0B0]">
+                          features_parking
+                        </label>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id="features_storage"
+                          checked={featuresStorage}
+                          onChange={(e) => setFeaturesStorage(e.target.checked)}
+                          className="w-4 h-4 rounded border-white/30 bg-white/5 text-[#C9A962] focus:ring-2 focus:ring-[#C9A962]"
+                        />
+                        <label htmlFor="features_storage" className="text-sm text-[#B0B0B0]">
+                          features_storage
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-[#B0B0B0] mb-1">
+                        features_terrace
+                      </label>
+                      <input
+                        value={featuresTerrace}
+                        onChange={(e) => setFeaturesTerrace(e.target.value)}
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-[#6F6F6F] outline-none focus:ring-2 focus:ring-[#C9A962] focus:border-transparent"
+                        placeholder="Ej: 10 m², 20 m²"
+                      />
+                    </div>
                   </div>
 
                   <button
@@ -368,31 +678,36 @@ export default function AdminPanel() {
                   <div className="space-y-4">
                     {projects.map((p) => {
                       const safeTags = formatTags(p.tags)
+                      const safeGallery = formatGallery(p.gallery)
+                      const safePlans = formatPlans(p.plans)
                       return (
                         <div
-                          key={String(p.id ?? p.title)}
+                          key={String(p.id ?? p.slug)}
                           className="rounded-xl border border-white/10 bg-white/5 p-4"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div>
-                              <div className="font-semibold">{p.title}</div>
-                              {p.category && (
-                                <div className="text-sm text-[#B0B0B0] mt-0.5">
-                                  {p.category}
-                                  {p.location ? ` • ${p.location}` : ''}
-                                </div>
-                              )}
-                              {!p.category && p.location && (
-                                <div className="text-sm text-[#B0B0B0] mt-0.5">
-                                  {p.location}
+                              <div className="font-semibold">{p.name}</div>
+                              <div className="text-sm text-[#B0B0B0] mt-0.5">
+                                {p.developer && <span>{p.developer}</span>}
+                                {p.developer && p.city && <span> • </span>}
+                                {p.city && <span>{p.city}</span>}
+                              </div>
+                              <div className="text-sm text-[#B0B0B0] mt-0.5">
+                                {p.slug && <span className="text-xs opacity-60">slug: {p.slug}</span>}
+                              </div>
+
+                              {p.address && (
+                                <div className="text-sm text-[#B0B0B0] mt-1">
+                                  {p.address}
                                 </div>
                               )}
 
-                              {p.description && (
-                                <div className="text-sm text-[#B0B0B0] mt-2">
-                                  {p.description}
-                                </div>
-                              )}
+                              <div className="text-sm text-[#B0B0B0] mt-1">
+                                Precio desde: {p.price_from_uf} UF
+                                {p.surface && <span> • Superficie: {p.surface}</span>}
+                                {p.status && <span> • {p.status}</span>}
+                              </div>
 
                               {safeTags.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mt-3">
@@ -404,6 +719,28 @@ export default function AdminPanel() {
                                       {t}
                                     </span>
                                   ))}
+                                </div>
+                              )}
+
+                              {safeGallery.length > 0 && (
+                                <div className="mt-2 text-xs text-[#B0B0B0]">
+                                  Gallery: {safeGallery.length} imagen(es)
+                                </div>
+                              )}
+
+                              {safePlans.length > 0 && (
+                                <div className="mt-1 text-xs text-[#B0B0B0]">
+                                  Plans: {safePlans.length} archivo(s)
+                                </div>
+                              )}
+
+                              {p.features && (
+                                <div className="mt-2 text-xs text-[#B0B0B0]">
+                                  Dormitorios: {p.features.bedrooms || 'N/A'} •
+                                  Baños: {p.features.bathrooms || 'N/A'}
+                                  {p.features.parking && ' • Estacionamiento'}
+                                  {p.features.storage && ' • Bodega'}
+                                  {p.features.terrace && ` • Terraza: ${p.features.terrace}`}
                                 </div>
                               )}
                             </div>
