@@ -1,5 +1,7 @@
 import type { Project } from '@/data/projects';
 import { supabase } from '@/lib/supabaseClient';
+import { projects as localProjects } from '@/data/projects';
+
 
 const TABLE = 'projects';
 
@@ -28,26 +30,28 @@ function normalizeProject(row: any): Project {
 }
 
 export async function fetchProjects(): Promise<Project[]> {
-  if (!supabase) return [];
+  if (!supabase) return localProjects;
 
   const { data, error } = await supabase
     .from(TABLE)
     .select('*')
     .order('name', { ascending: true });
 
-
   if (error) throw error;
   return (data ?? []).map(normalizeProject);
 }
 
 export async function fetchProjectBySlug(slug: string): Promise<Project | null> {
-  if (!supabase) return null;
+  if (!supabase) {
+    return localProjects.find((p) => p.slug === slug) ?? null;
+  }
 
   const { data, error } = await supabase
     .from(TABLE)
     .select('*')
     .eq('slug', slug)
     .single();
+
 
 
   if (error) {
