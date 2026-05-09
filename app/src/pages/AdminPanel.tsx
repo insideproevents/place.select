@@ -145,6 +145,7 @@ export default function AdminPanel() {
 
         if (listError) throw listError
         setProjects((data ?? []) as AdminProjectRow[])
+        console.log('proyectos cargados:', (data ?? []) as AdminProjectRow[])
       } catch (e: any) {
         setError(e?.message ?? 'Error cargando proyectos.')
       } finally {
@@ -234,7 +235,9 @@ export default function AdminPanel() {
         .order('name', { ascending: true })
 
       if (listError) throw listError
-      setProjects((data ?? []) as AdminProjectRow[])
+      const updatedProjects = (data ?? []) as AdminProjectRow[]
+      setProjects(updatedProjects)
+      console.log('proyectos cargados (post guardado):', updatedProjects)
     } catch (e: any) {
       setError(e?.message ?? 'Error al guardar el proyecto.')
     }
@@ -268,7 +271,9 @@ export default function AdminPanel() {
         .order('name', { ascending: true })
 
       if (listError) throw listError
-      setProjects((data ?? []) as AdminProjectRow[])
+      const updatedProjects = (data ?? []) as AdminProjectRow[]
+      setProjects(updatedProjects)
+      console.log('proyectos cargados (post eliminación):', updatedProjects)
     } catch (e: any) {
       setError(e?.message ?? 'Error al eliminar el proyecto.')
     }
