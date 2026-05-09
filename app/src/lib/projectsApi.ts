@@ -1,5 +1,5 @@
 import type { Project } from '@/data/projects';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase';
 import { projects as localProjects } from '@/data/projects';
 
 
