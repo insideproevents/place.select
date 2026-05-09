@@ -37,6 +37,8 @@ export interface Project {
   }[];
 }
 
+// Nota: los datos se consumen desde Supabase.
+// Se mantiene esta exportación solo como fallback/local.
 export const projects: Project[] = [
   {
     slug: "los-cactus",

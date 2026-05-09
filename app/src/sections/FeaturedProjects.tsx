@@ -1,8 +1,23 @@
 import { motion } from 'framer-motion';
 import ProjectCard from '@/components/ProjectCard';
-import { projects } from '@/data/projects';
+import { useEffect, useState } from 'react';
+import type { Project } from '@/data/projects';
+import { fetchProjects } from '@/lib/projectsApi';
 
 export default function FeaturedProjects() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const data = await fetchProjects();
+      if (mounted) setProjects(data);
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <section id="proyectos" className="py-20 lg:py-28 bg-[#0A0A0A]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12">

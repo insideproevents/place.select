@@ -1,15 +1,37 @@
 import { useParams, Link } from 'react-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Bed, Bath, Car, Warehouse, Maximize, Calendar, CheckCircle2, Play, RotateCcw } from 'lucide-react';
-import { getProjectBySlug, projects } from '@/data/projects';
+import type { Project } from '@/data/projects';
+import { fetchProjectBySlug, fetchProjects } from '@/lib/projectsApi';
 import Navbar from '@/sections/Navbar';
 import Footer from '@/sections/Footer';
 import MortgageCalculator from '@/sections/MortgageCalculator';
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const project = getProjectBySlug(slug || '');
+
+  const [project, setProject] = useState<Project | null>(null);
+  const [projectsList, setProjectsList] = useState<Project[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const [p, all] = await Promise.all([
+        fetchProjectBySlug(slug || ''),
+        fetchProjects(),
+      ]);
+      if (!mounted) return;
+      setProject(p);
+      setProjectsList(all);
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [slug]);
+
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -41,7 +63,9 @@ export default function ProjectDetail() {
     }
   };
 
-  const nextProject = projects[(projects.findIndex(p => p.slug === slug) + 1) % projects.length];
+  const nextProject = projectsList.length
+    ? projectsList[(projectsList.findIndex(p => p.slug === slug) + 1) % projectsList.length]
+    : null;
 
   return (
     <>
@@ -334,26 +358,28 @@ export default function ProjectDetail() {
         </section>
 
         {/* Next Project */}
-        <section className="py-12 bg-[#111111]">
-          <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12">
-            <div className="flex items-center justify-between">
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 text-[#B0B0B0] hover:text-[#C9A962] transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Volver a proyectos
-              </Link>
-              <Link
-                to={`/proyecto/${nextProject.slug}`}
-                className="inline-flex items-center gap-2 text-[#C9A962] hover:underline"
-              >
-                Siguiente proyecto: {nextProject.name}
-                <ArrowLeft className="w-4 h-4 rotate-180" />
-              </Link>
+        {nextProject && (
+          <section className="py-12 bg-[#111111]">
+            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12">
+              <div className="flex items-center justify-between">
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 text-[#B0B0B0] hover:text-[#C9A962] transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Volver a proyectos
+                </Link>
+                <Link
+                  to={`/proyecto/${nextProject.slug}`}
+                  className="inline-flex items-center gap-2 text-[#C9A962] hover:underline"
+                >
+                  Siguiente proyecto: {nextProject.name}
+                  <ArrowLeft className="w-4 h-4 rotate-180" />
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
       <Footer />
     </>
